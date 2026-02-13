@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Something Special ❤️ Valentine's Movie</title>
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --valentine-pink: #FFB6C1;
+            --valentine-dark-pink: #FF69B4;
+            --valentine-red: #FF1493;
+            --valentine-soft-pink: #FFE4E1;
+            --valentine-gold: #FFD700;
+            --valentine-purple: #DA70D6;
+            --romantic-gradient: linear-gradient(135deg, #FFB6C1, #FF69B4, #FF1493);
+        }
+
+        /* ===== CINEMATIC BASE ===== */
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        #movie-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 800px;
+            background: var(--valentine-dark-pink);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
+            border-radius: 30px;
+        }
+
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF1493, #FF69B4, #FFB6C1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-text {
+            color: #fff;
+            font-size: 32px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .loader-bar {
+            width: 250px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: #fff;
+            animation: loading 1.5s infinite;
+            border-radius: 10px;
+        }
+
+        .loader-percent {
+            color: #fff;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        @keyframes loading {
+            0% { left: -50%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+            50% { text-shadow: 0 0 40px rgba(255,255,255,1); }
+        }
+
+        /* ===== CINEMATIC OVERLAYS ===== */
+        .film-grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 50% 50%, rgba(255,192,203,0.1) 0px, transparent 1px);
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.2;
+            mix-blend-mode: overlay;
+        }
+
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 150px rgba(255,20,147,0.3);
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        /* ===== SCENES ===== */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+        }
+
+        .scene.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Romantic Scene-specific backgrounds */
+        .scene[data-scene="1"] { --bg-start: #FFB6C1; --bg-end: #FF69B4; } /* Morning */
+        .scene[data-scene="2"] { --bg-start: #FF69B4; --bg-end: #FF1493; } /* Ride */
+        .scene[data-scene="3"] { --bg-start: #FF1493; --bg-end: #DA70D6; } /* Pickup */
+        .scene[data-scene="4"] { --bg-start: #DA70D6; --bg-end: #FFB6C1; } /* Couple ride */
+        .scene[data-scene="5"] { --bg-start: #FFB6C1; --bg-end: #FF69B4; } /* Park */
+        .scene[data-scene="6"] { --bg-start: #2C1A4D; --bg-end: #FF1493; } /* Hack (romantic twist) */
+        .scene[data-scene="7"] { --bg-start: #FF1493; --bg-end: #FFD700; } /* Finale */
+
+        /* ===== PARALLAX LAYERS ===== */
+        .parallax-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 30%;
+            background: linear-gradient(180deg, transparent 0%, rgba(255,105,180,0.3) 100%);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        .parallax-floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 20%;
+            background: repeating-linear-gradient(90deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 20px, transparent 20px, transparent 40px);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+        }
+
+        /* ===== CHARACTERS ===== */
+        .character {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%) translate3d(0, 0, 0);
+            height: 28vh;
+            max-height: 220px;
+            will-change: transform;
+            transition: transform 0.3s ease;
+            z-index: 10;
+            filter: drop-shadow(0 15px 20px rgba(255,20,147,0.4));
+        }
+
+        .character img {
+            height: 100%;
+            width: auto;
+            max-width: none;
+            object-fit: contain;
+        }
+
+        /* ===== DIALOGUE BOXES ===== */
+        .dialogue {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 30px;
+            padding: 18px 30px;
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.4);
+            box-shadow: 0 8px 32px rgba(255,20,147,0.3);
+            white-space: nowrap;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .dialogue.show {
+            opacity: 1;
+        }
+
+        .dialogue::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 12px solid rgba(255,255,255,0.25);
+        }
+
+        /* ===== QR CODE ===== */
+        .qr-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 30;
+        }
+
+        .qr-box {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 0 0 40px rgba(255,105,180,0.8);
+            animation: romanticPulse 2s infinite;
+            border: 3px solid #FF69B4;
+        }
+
+        .qr-box svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #FF1493;
+            animation: scan 2s linear infinite;
+            opacity: 0.7;
+            box-shadow: 0 0 15px #FF69B4;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        @keyframes romanticPulse {
+            0% { box-shadow: 0 0 40px rgba(255,105,180,0.5); }
+            50% { box-shadow: 0 0 70px rgba(255,20,147,0.9); }
+            100% { box-shadow: 0 0 40px rgba(255,105,180,0.5); }
+        }
+
+        /* ===== HACKER MASK & QUIZ (Romantic Version) ===== */
+        .hacker-mask {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 170px;
+            height: 170px;
+            z-index: 100;
+            filter: drop-shadow(0 0 30px #FF1493);
+            animation: romanticGlitch 0.5s infinite;
+        }
+
+        @keyframes romanticGlitch {
+            0% { filter: drop-shadow(0 0 30px #FF1493); transform: translateX(-50%) skew(0deg); }
+            20% { filter: drop-shadow(-7px 0 25px #FF69B4); transform: translateX(-52%) skew(3deg); }
+            40% { filter: drop-shadow(7px 0 25px #FFB6C1); transform: translateX(-48%) skew(-3deg); }
+            60% { filter: drop-shadow(0 0 30px #FF1493); transform: translateX(-50%) skew(0deg); }
+        }
+
+        .quiz-box {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            background: rgba(255,240,245,0.95);
+            border: 3px solid #FF1493;
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 0 50px rgba(255,20,147,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .quiz-box h3 {
+            color: #FF1493;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(255,105,180,0.3);
+        }
+
+        .quiz-box h3:first-child {
+            color: #FF69B4;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .quiz-btn {
+            padding: 15px 35px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255,20,147,0.3);
+        }
+
+        #yes-btn {
+            background: #FF1493;
+            color: white;
+        }
+
+        #yes-btn:hover {
+            transform: scale(1.1);
+            background: #FF69B4;
+            box-shadow: 0 0 30px #FF1493;
+        }
+
+        #no-btn {
+            background: #FFB6C1;
+            color: #FF1493;
+            position: relative;
+        }
+
+        /* ===== ROSE PETAL RAIN ===== */
+        .petal-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        .petal {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: url('petal.png') no-repeat center/contain;
+            animation: romanticFall linear infinite;
+            filter: drop-shadow(0 0 8px #FF69B4);
+        }
+
+        @keyframes romanticFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        /* ===== TEDDY BEAR FINALE ===== */
+        .teddy-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 150;
+            animation: romanticFloat 3s ease-in-out infinite;
+        }
+
+        .teddy-container img {
+            width: 180px;
+            height: auto;
+            filter: drop-shadow(0 15px 30px rgba(255,20,147,0.6));
+        }
+
+        .final-message {
+            color: white;
+            font-size: 34px;
+            font-weight: bold;
+            text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.3);
+            margin-top: 25px;
+            animation: romanticGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes romanticFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-25px); }
+        }
+
+        @keyframes romanticGlow {
+            0%, 100% { text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.3); }
+            50% { text-shadow: 0 0 60px #FF69B4, 4px 4px 8px rgba(0,0,0,0.3); }
+        }
+
+        /* ===== HEART-SHAPED NAVIGATION ===== */
+        .nav-controls {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--romantic-gradient);
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
+            color: white;
+            font-size: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 25px rgba(255,20,147,0.6);
+            position: relative;
+        }
+
+        /* Heart shape for buttons */
+        #prev-scene, #next-scene {
+            clip-path: path("M30,10 C25,0 10,0 5,10 C0,20 5,30 15,35 C25,40 30,35 30,35 C30,35 35,40 45,35 C55,30 60,20 55,10 C50,0 35,0 30,10 Z");
+            background: linear-gradient(145deg, #FF1493, #FF69B4);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.85);
+            box-shadow: 0 0 40px #FF1493;
+        }
+
+        /* Audio controls */
+        .audio-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        #music-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255,20,147,0.5);
+            transition: all 0.3s ease;
+        }
+
+        #music-toggle:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+    <div id="movie-container">
+        <!-- Audio Element (hidden) -->
+        <audio id="bg-music" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+            <!-- Fallback romantic music - replace with your own file -->
+        </audio>
+
+        <!-- Preloader -->
+        <div id="preloader">
+            <div class="loader-text">Something Special</div>
+            <div class="loader-bar"></div>
+            <div class="loader-percent" id="loader-percent">0%</div>
+        </div>
+
+        <!-- Cinematic Overlays -->
+        <div class="film-grain"></div>
+        <div class="vignette"></div>
+
+        <!-- Audio Control -->
+        <div class="audio-control">
+            <div id="music-toggle">🔊</div>
+        </div>
+
+        <!-- Heart-shaped Navigation -->
+        <div class="nav-controls">
+            <div class="nav-btn" id="prev-scene">←</div>
+            <div class="nav-btn" id="next-scene">→</div>
+        </div>
+
+        <!-- SCENE 1: The Wave -->
+        <div class="scene" data-scene="1" id="scene1">
+            <div class="parallax-bg" id="parallax-bg-1"></div>
+            <div class="parallax-floor" id="parallax-floor-1"></div>
+            <div class="character" id="char1">
+                <img src="boy_bike_wave.png" alt="Boy waving on bike" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E❤️%3C%2Ftext%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="dialogue" id="dialogue1">Hey beautiful! Coming to pick you up! 💕</div>
+        </div>
+
+        <!-- SCENE 2: Solo Ride -->
+        <div class="scene" data-scene="2" id="scene2">
+            <div class="parallax-bg" id="parallax-bg-2"></div>
+            <div class="parallax-floor" id="parallax-floor-2"></div>
+            <div class="character moving" id="char2">
+                <img src="bike_solo.png" alt="Boy riding solo" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E🏍️%3C%2Ftext%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="dialogue" id="dialogue2">Can't wait to see you! 💖</div>
+        </div>
+
+        <!-- SCENE 3: The Pickup -->
+        <div class="scene" data-scene="3" id="scene3">
+            <div class="parallax-bg"></div>
+            <div class="character" id="char3-boy" style="left: 30%;">
+                <img src="bike_solo.png" alt="Boy on bike" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="character" id="char3-girl" style="left: 70%;">
+                <img src="girl.png" alt="Girl waiting" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff69b4%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="dialogue" id="dialogue3">You look gorgeous! Hop on! 🥰</div>
+        </div>
+
+        <!-- SCENE 4: Couple Ride -->
+        <div class="scene" data-scene="4" id="scene4">
+            <div class="parallax-bg" id="parallax-bg-4"></div>
+            <div class="parallax-floor" id="parallax-floor-4"></div>
+            <div class="character moving" id="char4">
+                <img src="couple_bike.png" alt="Couple riding" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2250%22%20r%3D%2220%22%20fill%3D%22%23ff1493%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2250%22%20r%3D%2220%22%20fill%3D%22%23ff69b4%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            <div class="dialogue" id="dialogue4">Let's go to our special place! 🌹</div>
+        </div>
+
+        <!-- SCENE 5: Park Date -->
+        <div class="scene" data-scene="5" id="scene5">
+            <div class="parallax-bg"></div>
+            <div class="character" id="char5">
+                <img src="couple_bench.png" alt="Couple on bench" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2260%22%20height%3D%2210%22%20fill%3D%22%238B4513%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2245%22%20r%3D%2215%22%20fill%3D%22%23ff1493%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2245%22%20r%3D%2215%22%20fill%3D%22%23ff69b4%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            
+            <!-- QR Code -->
+            <div class="qr-container" id="qr-code" style="display: none;">
+                <div class="qr-box">
+                    <svg viewBox="0 0 100 100">
+                        <rect width="100" height="100" fill="white"/>
+                        <rect x="10" y="10" width="30" height="30" fill="#FF1493"/>
+                        <rect x="60" y="10" width="30" height="30" fill="#FF1493"/>
+                        <rect x="10" y="60" width="30" height="30" fill="#FF1493"/>
+                        <rect x="60" y="60" width="30" height="30" fill="#FF1493"/>
+                        <rect x="35" y="35" width="30" height="30" fill="#FF1493"/>
+                    </svg>
+                    <div class="scan-line"></div>
+                </div>
+                <p style="color: white; margin-top: 15px; font-size: 18px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Scan for a surprise! 💝</p>
+            </div>
+            
+            <div class="dialogue" id="dialogue5">Peri Peri fries and you = perfect day! 🍟❤️</div>
+        </div>
+
+        <!-- SCENE 6: The Romantic Hack -->
+        <div class="scene" data-scene="6" id="scene6">
+            <div class="hacker-mask" id="hacker-mask">
+                <img src="mask.png" alt="Romantic mask" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2275%22%20r%3D%2260%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%2255%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22white%22%2F%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M55%20100 Q75%20130%2095%20100%22%20stroke%3D%22white%22%20stroke-width%3D%228%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E'">
+            </div>
+            
+            <div class="quiz-box" id="quiz-box">
+                <h3>❤️ SECURITY CHECK ❤️</h3>
+                <h3 style="color: #FF1493; margin-bottom: 30px;">WILL YOU BE MY VALENTINE?</h3>
+                <div class="quiz-buttons">
+                    <button class="quiz-btn" id="yes-btn">YES! 💝</button>
+                    <button class="quiz-btn" id="no-btn">NO 😢</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCENE 7: The Grand Finale -->
+        <div class="scene" data-scene="7" id="scene7">
+            <div class="petal-rain" id="petal-rain"></div>
+            <div class="teddy-container">
+                <img src="teddy.png" alt="Teddy bear" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%23FF69B4%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%2290%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22%23FF1493%22%2F%3E%3C%2Fsvg%3E'">
+                <div class="final-message">HAPPY VALENTINE'S DAY! ❤️</div>
+                <div style="color: white; font-size: 22px; margin-top: 15px;">I love you! 💕</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ROMANTIC DIRECTOR'S CUT - MAIN CONTROL =====
+        class ValentineMovie {
+            constructor() {
+                this.currentScene = 1;
+                this.totalScenes = 7;
+                this.scenes = document.querySelectorAll('.scene');
+                this.dialogues = document.querySelectorAll('.dialogue');
+                this.audio = document.getElementById('bg-music');
+                this.musicPlaying = false;
+                this.parallaxElements = [];
+                this.loadingProgress = 0;
+                this.imagesToLoad = [
+                    'boy_bike_wave.png',
+                    'bike_solo.png',
+                    'girl.png',
+                    'couple_bike.png',
+                    'couple_bench.png',
+                    'mask.png',
+                    'petal.png',
+                    'teddy.png'
+                ];
+                
+                this.init();
+            }
+            
+            async init() {
+                await this.loadAssets();
+                this.setupEventListeners();
+                this.showScene(1);
+                this.startParallax();
+                this.setupNoButton();
+                this.startPreloader();
+                this.setupAudio();
+            }
+            
+            setupAudio() {
+                // Try to play music automatically (may be blocked by browser)
+                this.audio.volume = 0.5;
+                let playPromise = this.audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        this.musicPlaying = true;
+                        document.getElementById('music-toggle').textContent = '🔊';
+                    }).catch(() => {
+                        // Auto-play was blocked
+                        this.musicPlaying = false;
+                        document.getElementById('music-toggle').textContent = '🔈';
+                    });
+                }
+                
+                // Toggle music on button click
+                document.getElementById('music-toggle').addEventListener('click', () => {
+                    if (this.musicPlaying) {
+                        this.audio.pause();
+                        this.musicPlaying = false;
+                        document.getElementById('music-toggle').textContent = '🔈';
+                    } else {
+                        this.audio.play();
+                        this.musicPlaying = true;
+                        document.getElementById('music-toggle').textContent = '🔊';
+                    }
+                });
+            }
+            
+            startPreloader() {
+                const preloader = document.getElementById('preloader');
+                const percentEl = document.getElementById('loader-percent');
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 12;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            preloader.style.opacity = '0';
+                            setTimeout(() => {
+                                preloader.style.display = 'none';
+                            }, 500);
+                        }, 500);
+                    }
+                    percentEl.textContent = Math.min(100, Math.floor(progress)) + '%';
+                }, 150);
+            }
+            
+            loadAssets() {
+                return new Promise((resolve) => {
+                    let loaded = 0;
+                    this.imagesToLoad.forEach(src => {
+                        const img = new Image();
+                        img.onload = img.onerror = () => {
+                            loaded++;
+                            if (loaded === this.imagesToLoad.length) resolve();
+                        };
+                        img.src = src;
+                    });
+                    
+                    // Timeout after 3 seconds
+                    setTimeout(resolve, 3000);
+                });
+            }
+            
+            setupEventListeners() {
+                document.getElementById('prev-scene').addEventListener('click', () => this.prevScene());
+                document.getElementById('next-scene').addEventListener('click', () => this.nextScene());
+                
+                // QR Code appears after 5 seconds in scene 5
+                setTimeout(() => {
+                    if (this.currentScene === 5) {
+                        this.showQRCode();
+                    }
+                }, 5000);
+                
+                // Yes button
+                document.getElementById('yes-btn').addEventListener('click', () => {
+                    this.showScene(7);
+                    this.startPetalRain();
+                });
+            }
+            
+            showScene(sceneNumber) {
+                if (sceneNumber < 1 || sceneNumber > this.totalScenes) return;
+                
+                this.currentScene = sceneNumber;
+                
+                // Hide all scenes
+                this.scenes.forEach(scene => {
+                    scene.classList.remove('active');
+                });
+                
+                // Show current scene
+                document.getElementById(`scene${sceneNumber}`).classList.add('scene', 'active');
+                
+                // Show dialogue for current scene
+                this.dialogues.forEach(d => d.classList.remove('show'));
+                const dialogue = document.getElementById(`dialogue${sceneNumber}`);
+                if (dialogue) {
+                    setTimeout(() => dialogue.classList.add('show'), 500);
+                }
+                
+                // Special scene handlers
+                if (sceneNumber === 5) {
+                    setTimeout(() => this.showQRCode(), 3000);
+                }
+                
+                if (sceneNumber === 6) {
+                    this.startGlitchEffect();
+                }
+            }
+            
+            nextScene() {
+                this.showScene(this.currentScene + 1);
+            }
+            
+            prevScene() {
+                this.showScene(this.currentScene - 1);
+            }
+            
+            startParallax() {
+                let offset = 0;
+                setInterval(() => {
+                    if (this.currentScene === 2 || this.currentScene === 4) {
+                        offset -= 1;
+                        const bgElements = document.querySelectorAll('.parallax-bg, .parallax-floor');
+                        bgElements.forEach(el => {
+                            el.style.transform = `translate3d(${offset}px, 0, 0)`;
+                        });
+                        
+                        // Move character slightly
+                        const movingChar = document.querySelector('.character.moving');
+                        if (movingChar) {
+                            const moveOffset = (offset % 60) / 60 * 25 - 12.5;
+                            movingChar.style.transform = `translateX(calc(-50% + ${moveOffset}px)) translate3d(0, 0, 0)`;
+                        }
+                    }
+                }, 50);
+            }
+            
+            showQRCode() {
+                const qr = document.getElementById('qr-code');
+                if (qr && this.currentScene === 5) {
+                    qr.style.display = 'block';
+                    setTimeout(() => {
+                        qr.style.display = 'none';
+                        // Show mask scene after QR disappears
+                        setTimeout(() => this.showScene(6), 1500);
+                    }, 6000);
+                }
+            }
+            
+            setupNoButton() {
+                const noBtn = document.getElementById('no-btn');
+                if (!noBtn) return;
+                
+                noBtn.addEventListener('mouseover', (e) => {
+                    const container = document.getElementById('movie-container');
+                    const maxX = container.clientWidth - 100;
+                    const maxY = container.clientHeight - 100;
+                    const x = Math.random() * maxX;
+                    const y = Math.random() * maxY;
+                    noBtn.style.position = 'absolute';
+                    noBtn.style.left = x + 'px';
+                    noBtn.style.top = y + 'px';
+                });
+                
+                // For mobile
+                noBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const container = document.getElementById('movie-container');
+                    const maxX = container.clientWidth - 100;
+                    const maxY = container.clientHeight - 100;
+                    const x = Math.random() * maxX;
+                    const y = Math.random() * maxY;
+                    noBtn.style.position = 'absolute';
+                    noBtn.style.left = x + 'px';
+                    noBtn.style.top = y + 'px';
+                });
+            }
+            
+            startGlitchEffect() {
+                const mask = document.getElementById('hacker-mask');
+                if (!mask) return;
+                
+                setInterval(() => {
+                    mask.style.opacity = Math.random() > 0.4 ? '1' : '0.9';
+                    mask.style.transform = `translateX(-50%) scale(${1 + (Math.random() * 0.1 - 0.05)})`;
+                }, 150);
+            }
+            
+            startPetalRain() {
+                const container = document.getElementById('petal-rain');
+                if (!container) return;
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const petal = document.createElement('div');
+                        petal.className = 'petal';
+                        petal.style.left = Math.random() * 100 + '%';
+                        petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                        petal.style.animationDelay = '0s';
+                        petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+                        container.appendChild(petal);
+                        
+                        // Remove after animation
+                        setTimeout(() => petal.remove(), 7000);
+                    }, i * 150);
+                }
+            }
+        }
+        
+        // Start the movie when page loads
+        window.addEventListener('load', () => {
+            const movie = new ValentineMovie();
+        });
+    </script>
+</body>
+</html>
