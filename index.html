@@ -60,66 +60,6 @@
             }
         }
 
-        /* ===== INITIAL WELCOME SCREEN ===== */
-        #welcome-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #FF1493, #FF69B4, #FFB6C1);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.8s ease;
-            cursor: pointer;
-        }
-
-        .welcome-text {
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-shadow: 0 0 30px rgba(255,255,255,0.8);
-            margin-bottom: 20px;
-            animation: welcomePulse 2s ease-in-out infinite;
-        }
-
-        .welcome-subtext {
-            color: rgba(255,255,255,0.9);
-            font-size: 18px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-            animation: welcomePulse 2s ease-in-out infinite 0.3s;
-        }
-
-        .tap-hint {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            opacity: 0.7;
-            animation: bounce 1.5s ease-in-out infinite;
-        }
-
-        @keyframes welcomePulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        #welcome-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         /* ===== CINEMATIC OVERLAYS ===== */
         .film-grain {
             position: absolute;
@@ -630,13 +570,6 @@
             <source src="roman.mp3" type="audio/mp3">
         </audio>
 
-        <!-- Welcome Screen with "Something Special" Text -->
-        <div id="welcome-screen">
-            <div class="welcome-text">Something Special</div>
-            <div class="welcome-subtext">❤️ Tap anywhere to begin ❤️</div>
-            <div class="tap-hint">👇</div>
-        </div>
-
         <!-- Cinematic Overlays -->
         <div class="film-grain"></div>
         <div class="vignette"></div>
@@ -652,14 +585,14 @@
             <div class="nav-btn" id="next-scene">→</div>
         </div>
 
-        <!-- SCENE 1: The Wave -->
-        <div class="scene" data-scene="1" id="scene1">
+        <!-- SCENE 1: The Wave (Active by default) -->
+        <div class="scene active" data-scene="1" id="scene1">
             <div class="parallax-bg"></div>
             <div class="parallax-floor"></div>
             <div class="character" id="char1">
                 <img src="boy_bike_wave.png" alt="Boy waving on bike" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E❤️%3C%2Ftext%3E%3C%2Fsvg%3E'">
             </div>
-            <div class="dialogue" id="dialogue1">Hey beautiful! Coming to pick you up! 💕</div>
+            <div class="dialogue show" id="dialogue1">Hey beautiful! Coming to pick you up! 💕</div>
         </div>
 
         <!-- SCENE 2: Solo Ride -->
@@ -773,7 +706,6 @@
                 this.dialogues = document.querySelectorAll('.dialogue');
                 this.audio = document.getElementById('bg-music');
                 this.musicPlaying = false;
-                this.welcomeScreen = document.getElementById('welcome-screen');
                 
                 // Valentine Questions
                 this.questions = [
@@ -792,31 +724,7 @@
                 this.setupNoButton();
                 this.setupAudio();
                 
-                // Click on welcome screen to start
-                this.welcomeScreen.addEventListener('click', () => {
-                    this.startMovie();
-                });
-                
-                // Also allow arrow buttons to start
-                document.getElementById('next-scene').addEventListener('click', () => {
-                    if (this.welcomeScreen && !this.welcomeScreen.classList.contains('hidden')) {
-                        this.startMovie();
-                    }
-                });
-                
-                document.getElementById('prev-scene').addEventListener('click', () => {
-                    if (this.welcomeScreen && !this.welcomeScreen.classList.contains('hidden')) {
-                        this.startMovie();
-                    }
-                });
-            }
-            
-            startMovie() {
-                // Hide welcome screen
-                this.welcomeScreen.classList.add('hidden');
-                
-                // Show scene 1
-                this.showScene(1);
+                // Scene 1 is already active with dialogue showing
             }
             
             setupAudio() {
@@ -930,20 +838,10 @@
             }
             
             nextScene() {
-                // If welcome screen is visible, start movie instead
-                if (this.welcomeScreen && !this.welcomeScreen.classList.contains('hidden')) {
-                    this.startMovie();
-                    return;
-                }
                 this.showScene(this.currentScene + 1);
             }
             
             prevScene() {
-                // If welcome screen is visible, start movie instead
-                if (this.welcomeScreen && !this.welcomeScreen.classList.contains('hidden')) {
-                    this.startMovie();
-                    return;
-                }
                 this.showScene(this.currentScene - 1);
             }
             
