@@ -62,9 +62,9 @@
 
         .loader-text {
             color: #fff;
-            font-size: 32px;
+            font-size: 36px;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: bold;
             text-transform: uppercase;
             text-shadow: 0 0 20px rgba(255,255,255,0.8);
@@ -72,8 +72,8 @@
         }
 
         .loader-bar {
-            width: 250px;
-            height: 4px;
+            width: 280px;
+            height: 6px;
             background: rgba(255,255,255,0.3);
             position: relative;
             overflow: hidden;
@@ -92,8 +92,8 @@
 
         .loader-percent {
             color: #fff;
-            margin-top: 15px;
-            font-size: 18px;
+            margin-top: 20px;
+            font-size: 22px;
             font-weight: bold;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
@@ -157,8 +157,9 @@
         .scene[data-scene="3"] { --bg-start: #FF1493; --bg-end: #DA70D6; } /* Pickup */
         .scene[data-scene="4"] { --bg-start: #DA70D6; --bg-end: #FFB6C1; } /* Couple ride */
         .scene[data-scene="5"] { --bg-start: #FFB6C1; --bg-end: #FF69B4; } /* Park */
-        .scene[data-scene="6"] { --bg-start: #2C1A4D; --bg-end: #FF1493; } /* Hack (romantic twist) */
-        .scene[data-scene="7"] { --bg-start: #FF1493; --bg-end: #FFD700; } /* Finale */
+        .scene[data-scene="6"] { --bg-start: #2C1A4D; --bg-end: #FF1493; } /* QR Scan */
+        .scene[data-scene="7"] { --bg-start: #1a0f2e; --bg-end: #FF1493; } /* Hack */
+        .scene[data-scene="8"] { --bg-start: #FF1493; --bg-end: #FFD700; } /* Finale */
 
         /* ===== PARALLAX LAYERS ===== */
         .parallax-bg {
@@ -215,10 +216,8 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 30px;
-            padding: 18px 30px;
+            padding: 15px 25px;
             color: white;
-            font-size: 22px;
-            font-weight: 600;
             border: 2px solid rgba(255,255,255,0.4);
             box-shadow: 0 8px 32px rgba(255,20,147,0.3);
             white-space: nowrap;
@@ -245,25 +244,39 @@
             border-top: 12px solid rgba(255,255,255,0.25);
         }
 
-        /* ===== QR CODE ===== */
+        /* All dialogues same size (20px) */
+        #scene1 .dialogue, #scene2 .dialogue, #scene3 .dialogue, 
+        #scene4 .dialogue, #scene5 .dialogue, #scene6 .dialogue, 
+        #scene7 .dialogue, #scene8 .dialogue {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        /* ===== QR CODE SECTION (Centered between dialogue and character) ===== */
         .qr-container {
             position: absolute;
-            top: 50%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 30;
+            animation: float 2s ease-in-out infinite;
         }
 
         .qr-box {
-            width: 180px;
-            height: 180px;
+            width: 120px;
+            height: 120px;
             background: white;
-            padding: 15px;
-            border-radius: 25px;
+            padding: 10px;
+            border-radius: 20px;
             box-shadow: 0 0 40px rgba(255,105,180,0.8);
-            animation: romanticPulse 2s infinite;
-            border: 3px solid #FF69B4;
+            border: 3px solid #FF1493;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .qr-box:hover {
+            transform: scale(1.05);
         }
 
         .qr-box svg {
@@ -271,95 +284,153 @@
             height: 100%;
         }
 
+        /* ===== PHONE SCANNER UI ===== */
+        .phone-scanner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 500px;
+            background: rgba(20, 10, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 3px solid #FF1493;
+            box-shadow: 0 0 80px rgba(255,20,147,0.6);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: phoneAppear 0.5s ease;
+        }
+
+        @keyframes phoneAppear {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .phone-header {
+            background: #FF1493;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .scanner-area {
+            flex: 1;
+            position: relative;
+            background: #2a1a3a;
+            margin: 20px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 2px solid #FF69B4;
+        }
+
+        .scanning-qr {
+            width: 150px;
+            height: 150px;
+            background: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 20px;
+            padding: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
         .scan-line {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 3px;
+            height: 4px;
             background: #FF1493;
-            animation: scan 2s linear infinite;
-            opacity: 0.7;
-            box-shadow: 0 0 15px #FF69B4;
+            animation: scanVertical 2s linear infinite;
+            box-shadow: 0 0 20px #FF69B4;
         }
 
-        @keyframes scan {
+        @keyframes scanVertical {
             0% { top: 0; }
             100% { top: 100%; }
         }
 
-        @keyframes romanticPulse {
-            0% { box-shadow: 0 0 40px rgba(255,105,180,0.5); }
-            50% { box-shadow: 0 0 70px rgba(255,20,147,0.9); }
-            100% { box-shadow: 0 0 40px rgba(255,105,180,0.5); }
+        .scanning-text {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin: 20px;
+            animation: blink 1s infinite;
         }
 
-        /* ===== HACKER MASK & QUIZ (Romantic Version) ===== */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ===== HACKER MASK & QUIZ ===== */
         .hacker-mask {
             position: absolute;
-            top: 30%;
+            top: 25%;
             left: 50%;
             transform: translateX(-50%);
-            width: 170px;
-            height: 170px;
+            width: 180px;
+            height: 180px;
             z-index: 100;
-            filter: drop-shadow(0 0 30px #FF1493);
+            filter: drop-shadow(0 0 40px #FF1493);
             animation: romanticGlitch 0.5s infinite;
         }
 
         @keyframes romanticGlitch {
-            0% { filter: drop-shadow(0 0 30px #FF1493); transform: translateX(-50%) skew(0deg); }
-            20% { filter: drop-shadow(-7px 0 25px #FF69B4); transform: translateX(-52%) skew(3deg); }
-            40% { filter: drop-shadow(7px 0 25px #FFB6C1); transform: translateX(-48%) skew(-3deg); }
-            60% { filter: drop-shadow(0 0 30px #FF1493); transform: translateX(-50%) skew(0deg); }
+            0% { filter: drop-shadow(0 0 40px #FF1493); transform: translateX(-50%) skew(0deg); }
+            20% { filter: drop-shadow(-10px 0 35px #FF69B4); transform: translateX(-52%) skew(3deg); }
+            40% { filter: drop-shadow(10px 0 35px #FFB6C1); transform: translateX(-48%) skew(-3deg); }
+            60% { filter: drop-shadow(0 0 40px #FF1493); transform: translateX(-50%) skew(0deg); }
         }
 
-        .quiz-box {
+        .quiz-container {
             position: absolute;
-            top: 60%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 320px;
-            background: rgba(255,240,245,0.95);
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background: rgba(255,240,245,0.98);
             border: 3px solid #FF1493;
             border-radius: 25px;
-            padding: 25px;
+            padding: 25px 20px;
             text-align: center;
             z-index: 100;
-            box-shadow: 0 0 50px rgba(255,20,147,0.5);
+            box-shadow: 0 0 60px rgba(255,20,147,0.7);
             backdrop-filter: blur(5px);
         }
 
-        .quiz-box h3 {
+        .question-text {
             color: #FF1493;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
             margin-bottom: 25px;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(255,105,180,0.3);
-        }
-
-        .quiz-box h3:first-child {
-            color: #FF69B4;
-            font-size: 20px;
-            margin-bottom: 15px;
+            line-height: 1.5;
+            padding: 0 10px;
         }
 
         .quiz-buttons {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 25px;
+            margin-top: 15px;
         }
 
         .quiz-btn {
-            padding: 15px 35px;
-            font-size: 20px;
+            padding: 12px 30px;
+            font-size: 18px;
             border: none;
-            border-radius: 50px;
+            border-radius: 40px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255,20,147,0.3);
+            box-shadow: 0 5px 15px rgba(255,20,147,0.4);
         }
 
         #yes-btn {
@@ -392,17 +463,36 @@
 
         .petal {
             position: absolute;
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             background: url('petal.png') no-repeat center/contain;
             animation: romanticFall linear infinite;
-            filter: drop-shadow(0 0 8px #FF69B4);
+            filter: drop-shadow(0 0 12px #FF69B4);
         }
 
         @keyframes romanticFall {
             to {
-                transform: translateY(100vh) rotate(720deg);
+                transform: translateY(100vh) rotate(1080deg);
             }
+        }
+
+        /* ===== EXPLOSION EFFECT ===== */
+        .explosion {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FF1493, #FF69B4, #FFB6C1);
+            z-index: 180;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 800px; height: 800px; opacity: 0; }
         }
 
         /* ===== TEDDY BEAR FINALE ===== */
@@ -412,23 +502,30 @@
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            z-index: 150;
+            z-index: 190;
             animation: romanticFloat 3s ease-in-out infinite;
         }
 
         .teddy-container img {
             width: 180px;
             height: auto;
-            filter: drop-shadow(0 15px 30px rgba(255,20,147,0.6));
+            filter: drop-shadow(0 20px 40px rgba(255,20,147,0.7));
         }
 
         .final-message {
             color: white;
-            font-size: 34px;
+            font-size: 28px;
             font-weight: bold;
-            text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.3);
-            margin-top: 25px;
+            text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.4);
+            margin-top: 20px;
             animation: romanticGlow 2s ease-in-out infinite;
+        }
+
+        .final-submessage {
+            color: #FFE4E1;
+            font-size: 20px;
+            margin-top: 15px;
+            text-shadow: 0 0 15px #FF69B4;
         }
 
         @keyframes romanticFloat {
@@ -437,11 +534,11 @@
         }
 
         @keyframes romanticGlow {
-            0%, 100% { text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.3); }
-            50% { text-shadow: 0 0 60px #FF69B4, 4px 4px 8px rgba(0,0,0,0.3); }
+            0%, 100% { text-shadow: 0 0 30px #FF1493, 2px 2px 4px rgba(0,0,0,0.4); }
+            50% { text-shadow: 0 0 50px #FF69B4, 4px 4px 8px rgba(0,0,0,0.4); }
         }
 
-        /* ===== HEART-SHAPED NAVIGATION ===== */
+        /* ===== CIRCULAR NAVIGATION BUTTONS ===== */
         .nav-controls {
             position: absolute;
             bottom: 25px;
@@ -454,24 +551,17 @@
         .nav-btn {
             width: 60px;
             height: 60px;
-            background: var(--romantic-gradient);
-            backdrop-filter: blur(5px);
-            border: 2px solid white;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #FF1493, #FF69B4);
+            border: 3px solid white;
             color: white;
             font-size: 28px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            box-shadow: 0 0 25px rgba(255,20,147,0.7);
             transition: all 0.3s ease;
-            box-shadow: 0 0 25px rgba(255,20,147,0.6);
-            position: relative;
-        }
-
-        /* Heart shape for buttons */
-        #prev-scene, #next-scene {
-            clip-path: path("M30,10 C25,0 10,0 5,10 C0,20 5,30 15,35 C25,40 30,35 30,35 C30,35 35,40 45,35 C55,30 60,20 55,10 C50,0 35,0 30,10 Z");
-            background: linear-gradient(145deg, #FF1493, #FF69B4);
         }
 
         .nav-btn:active {
@@ -488,33 +578,32 @@
         }
 
         #music-toggle {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px);
-            border: 2px solid white;
+            backdrop-filter: blur(8px);
+            border: 3px solid white;
             color: white;
-            font-size: 24px;
+            font-size: 26px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,20,147,0.5);
+            box-shadow: 0 0 25px rgba(255,20,147,0.6);
             transition: all 0.3s ease;
         }
 
         #music-toggle:active {
-            transform: scale(0.9);
+            transform: scale(0.85);
         }
     </style>
 </head>
 <body>
     <div id="movie-container">
-        <!-- Audio Element (hidden) -->
-        <audio id="bg-music" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-            <!-- Fallback romantic music - replace with your own file -->
+        <!-- Audio Element -->
+        <audio id="bg-music" loop autoplay>
+            <source src="roman.mp3" type="audio/mp3">
         </audio>
 
         <!-- Preloader -->
@@ -533,7 +622,7 @@
             <div id="music-toggle">🔊</div>
         </div>
 
-        <!-- Heart-shaped Navigation -->
+        <!-- Circular Navigation Buttons -->
         <div class="nav-controls">
             <div class="nav-btn" id="prev-scene">←</div>
             <div class="nav-btn" id="next-scene">→</div>
@@ -541,20 +630,20 @@
 
         <!-- SCENE 1: The Wave -->
         <div class="scene" data-scene="1" id="scene1">
-            <div class="parallax-bg" id="parallax-bg-1"></div>
-            <div class="parallax-floor" id="parallax-floor-1"></div>
+            <div class="parallax-bg"></div>
+            <div class="parallax-floor"></div>
             <div class="character" id="char1">
-                <img src="boy_bike_wave.png" alt="Boy waving on bike" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E❤️%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <img src="boy_bike_wave.png" alt="Boy waving on bike" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E❤️%3C%2Ftext%3E%3C%2Fsvg%3E'">
             </div>
             <div class="dialogue" id="dialogue1">Hey beautiful! Coming to pick you up! 💕</div>
         </div>
 
         <!-- SCENE 2: Solo Ride -->
         <div class="scene" data-scene="2" id="scene2">
-            <div class="parallax-bg" id="parallax-bg-2"></div>
-            <div class="parallax-floor" id="parallax-floor-2"></div>
+            <div class="parallax-bg"></div>
+            <div class="parallax-floor"></div>
             <div class="character moving" id="char2">
-                <img src="bike_solo.png" alt="Boy riding solo" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E🏍️%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                <img src="bike_solo.png" alt="Boy riding solo" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2240%22%20fill%3D%22%23ff1493%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%2265%22%20font-size%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E🏍️%3C%2Ftext%3E%3C%2Fsvg%3E'">
             </div>
             <div class="dialogue" id="dialogue2">Can't wait to see you! 💖</div>
         </div>
@@ -573,24 +662,24 @@
 
         <!-- SCENE 4: Couple Ride -->
         <div class="scene" data-scene="4" id="scene4">
-            <div class="parallax-bg" id="parallax-bg-4"></div>
-            <div class="parallax-floor" id="parallax-floor-4"></div>
+            <div class="parallax-bg"></div>
+            <div class="parallax-floor"></div>
             <div class="character moving" id="char4">
                 <img src="couple_bike.png" alt="Couple riding" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2250%22%20r%3D%2220%22%20fill%3D%22%23ff1493%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2250%22%20r%3D%2220%22%20fill%3D%22%23ff69b4%22%2F%3E%3C%2Fsvg%3E'">
             </div>
             <div class="dialogue" id="dialogue4">Let's go to our special place! 🌹</div>
         </div>
 
-        <!-- SCENE 5: Park Date -->
+        <!-- SCENE 5: Park Date with QR Code (Centered between dialogue and character) -->
         <div class="scene" data-scene="5" id="scene5">
             <div class="parallax-bg"></div>
             <div class="character" id="char5">
                 <img src="couple_bench.png" alt="Couple on bench" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20x%3D%2220%22%20y%3D%2260%22%20width%3D%2260%22%20height%3D%2210%22%20fill%3D%22%238B4513%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2245%22%20r%3D%2215%22%20fill%3D%22%23ff1493%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2245%22%20r%3D%2215%22%20fill%3D%22%23ff69b4%22%2F%3E%3C%2Fsvg%3E'">
             </div>
             
-            <!-- QR Code -->
+            <!-- QR Code (centered between dialogue and character) -->
             <div class="qr-container" id="qr-code" style="display: none;">
-                <div class="qr-box">
+                <div class="qr-box" id="qr-click">
                     <svg viewBox="0 0 100 100">
                         <rect width="100" height="100" fill="white"/>
                         <rect x="10" y="10" width="30" height="30" fill="#FF1493"/>
@@ -599,63 +688,75 @@
                         <rect x="60" y="60" width="30" height="30" fill="#FF1493"/>
                         <rect x="35" y="35" width="30" height="30" fill="#FF1493"/>
                     </svg>
+                </div>
+            </div>
+            
+            <div class="dialogue" id="dialogue5">Hey! There's a QR code! Scan it! 📱</div>
+        </div>
+
+        <!-- SCENE 6: Phone Scanner UI -->
+        <div class="scene" data-scene="6" id="scene6">
+            <div class="phone-scanner" id="phone-scanner">
+                <div class="phone-header">📱 Valentine Scanner</div>
+                <div class="scanner-area">
+                    <div class="scanning-qr">
+                        <svg viewBox="0 0 100 100">
+                            <rect width="100" height="100" fill="white"/>
+                            <rect x="10" y="10" width="30" height="30" fill="#FF1493"/>
+                            <rect x="60" y="10" width="30" height="30" fill="#FF1493"/>
+                            <rect x="10" y="60" width="30" height="30" fill="#FF1493"/>
+                            <rect x="60" y="60" width="30" height="30" fill="#FF1493"/>
+                        </svg>
+                    </div>
                     <div class="scan-line"></div>
                 </div>
-                <p style="color: white; margin-top: 15px; font-size: 18px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Scan for a surprise! 💝</p>
+                <div class="scanning-text">Scanning QR Code...</div>
             </div>
-            
-            <div class="dialogue" id="dialogue5">Peri Peri fries and you = perfect day! 🍟❤️</div>
         </div>
 
-        <!-- SCENE 6: The Romantic Hack -->
-        <div class="scene" data-scene="6" id="scene6">
+        <!-- SCENE 7: Hacker Mask with Multiple Questions (Direct questions without numbering) -->
+        <div class="scene" data-scene="7" id="scene7">
             <div class="hacker-mask" id="hacker-mask">
-                <img src="mask.png" alt="Romantic mask" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2275%22%20r%3D%2260%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%2255%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22white%22%2F%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M55%20100 Q75%20130%2095%20100%22%20stroke%3D%22white%22%20stroke-width%3D%228%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E'">
+                <img src="mask.png" alt="Hacker mask" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22180%22%20viewBox%3D%220%200%20180%20180%22%3E%3Ccircle%20cx%3D%2290%22%20cy%3D%2290%22%20r%3D%2270%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%2265%22%20cy%3D%2275%22%20r%3D%2215%22%20fill%3D%22white%22%2F%3E%3Ccircle%20cx%3D%22115%22%20cy%3D%2275%22%20r%3D%2215%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M65%20125 Q90%20160%20115%20125%22%20stroke%3D%22white%22%20stroke-width%3D%2210%22%20fill%3D%22none%22%2F%3E%3Ctext%20x%3D%2290%22%20y%3D%22110%22%20font-size%3D%2220%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3E?%3C%2Ftext%3E%3C%2Fsvg%3E'">
             </div>
             
-            <div class="quiz-box" id="quiz-box">
-                <h3>❤️ SECURITY CHECK ❤️</h3>
-                <h3 style="color: #FF1493; margin-bottom: 30px;">WILL YOU BE MY VALENTINE?</h3>
+            <div class="quiz-container" id="quiz-container">
+                <div class="question-text" id="question-text">🔒 PRIVACY BREACH DETECTED!</div>
                 <div class="quiz-buttons">
-                    <button class="quiz-btn" id="yes-btn">YES! 💝</button>
-                    <button class="quiz-btn" id="no-btn">NO 😢</button>
+                    <button class="quiz-btn" id="yes-btn">YES 💝</button>
+                    <button class="quiz-btn" id="no-btn">NO 😈</button>
                 </div>
             </div>
         </div>
 
-        <!-- SCENE 7: The Grand Finale -->
-        <div class="scene" data-scene="7" id="scene7">
+        <!-- SCENE 8: The Grand Finale (No heart emoji) -->
+        <div class="scene" data-scene="8" id="scene8">
             <div class="petal-rain" id="petal-rain"></div>
             <div class="teddy-container">
-                <img src="teddy.png" alt="Teddy bear" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22150%22%20viewBox%3D%220%200%20150%20150%22%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2280%22%20r%3D%2240%22%20fill%3D%22%23FF69B4%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%2290%22%20cy%3D%2260%22%20r%3D%2210%22%20fill%3D%22%23FF1493%22%2F%3E%3C%2Fsvg%3E'">
-                <div class="final-message">HAPPY VALENTINE'S DAY! ❤️</div>
-                <div style="color: white; font-size: 22px; margin-top: 15px;">I love you! 💕</div>
+                <img src="teddy.png" alt="Teddy bear" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%20viewBox%3D%220%200%20200%20200%22%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%22110%22%20r%3D%2250%22%20fill%3D%22%23FF69B4%22%2F%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2280%22%20r%3D%2215%22%20fill%3D%22%23FF1493%22%2F%3E%3Ccircle%20cx%3D%22125%22%20cy%3D%2280%22%20r%3D%2215%22%20fill%3D%22%23FF1493%22%2F%3E%3C%2Fsvg%3E'">
+                <div class="final-message">HAPPY VALENTINE'S DAY</div>
+                <div class="final-submessage">You're my forever Valentine!</div>
             </div>
         </div>
     </div>
 
     <script>
-        // ===== ROMANTIC DIRECTOR'S CUT - MAIN CONTROL =====
         class ValentineMovie {
             constructor() {
                 this.currentScene = 1;
-                this.totalScenes = 7;
+                this.totalScenes = 8;
                 this.scenes = document.querySelectorAll('.scene');
                 this.dialogues = document.querySelectorAll('.dialogue');
                 this.audio = document.getElementById('bg-music');
                 this.musicPlaying = false;
-                this.parallaxElements = [];
-                this.loadingProgress = 0;
-                this.imagesToLoad = [
-                    'boy_bike_wave.png',
-                    'bike_solo.png',
-                    'girl.png',
-                    'couple_bike.png',
-                    'couple_bench.png',
-                    'mask.png',
-                    'petal.png',
-                    'teddy.png'
+                
+                // Valentine Questions (direct questions without numbering)
+                this.questions = [
+                    "Is your heart beating faster?",
+                    "Do you believe in love at first sight?",
+                    "Will you be my Valentine forever?"
                 ];
+                this.currentQuestion = 0;
                 
                 this.init();
             }
@@ -671,8 +772,9 @@
             }
             
             setupAudio() {
-                // Try to play music automatically (may be blocked by browser)
                 this.audio.volume = 0.5;
+                
+                // Try to play audio automatically
                 let playPromise = this.audio.play();
                 
                 if (playPromise !== undefined) {
@@ -680,13 +782,11 @@
                         this.musicPlaying = true;
                         document.getElementById('music-toggle').textContent = '🔊';
                     }).catch(() => {
-                        // Auto-play was blocked
                         this.musicPlaying = false;
                         document.getElementById('music-toggle').textContent = '🔈';
                     });
                 }
                 
-                // Toggle music on button click
                 document.getElementById('music-toggle').addEventListener('click', () => {
                     if (this.musicPlaying) {
                         this.audio.pause();
@@ -724,16 +824,26 @@
             loadAssets() {
                 return new Promise((resolve) => {
                     let loaded = 0;
-                    this.imagesToLoad.forEach(src => {
+                    const imagesToLoad = [
+                        'boy_bike_wave.png',
+                        'bike_solo.png',
+                        'girl.png',
+                        'couple_bike.png',
+                        'couple_bench.png',
+                        'mask.png',
+                        'petal.png',
+                        'teddy.png'
+                    ];
+                    
+                    imagesToLoad.forEach(src => {
                         const img = new Image();
                         img.onload = img.onerror = () => {
                             loaded++;
-                            if (loaded === this.imagesToLoad.length) resolve();
+                            if (loaded === imagesToLoad.length) resolve();
                         };
                         img.src = src;
                     });
                     
-                    // Timeout after 3 seconds
                     setTimeout(resolve, 3000);
                 });
             }
@@ -742,17 +852,26 @@
                 document.getElementById('prev-scene').addEventListener('click', () => this.prevScene());
                 document.getElementById('next-scene').addEventListener('click', () => this.nextScene());
                 
-                // QR Code appears after 5 seconds in scene 5
-                setTimeout(() => {
-                    if (this.currentScene === 5) {
-                        this.showQRCode();
-                    }
-                }, 5000);
+                // QR Code click to start scanner
+                document.getElementById('qr-click')?.addEventListener('click', () => {
+                    this.showScene(6);
+                    setTimeout(() => this.showScene(7), 3000);
+                });
                 
-                // Yes button
+                // Yes button for questions
                 document.getElementById('yes-btn').addEventListener('click', () => {
-                    this.showScene(7);
-                    this.startPetalRain();
+                    if (this.currentQuestion < this.questions.length - 1) {
+                        this.currentQuestion++;
+                        document.getElementById('question-text').textContent = this.questions[this.currentQuestion];
+                    } else {
+                        // All questions answered - explosion and finale
+                        this.maskExplodeAndFinale();
+                    }
+                });
+                
+                // Reset no button position on click
+                document.getElementById('no-btn')?.addEventListener('click', (e) => {
+                    e.preventDefault();
                 });
             }
             
@@ -761,13 +880,8 @@
                 
                 this.currentScene = sceneNumber;
                 
-                // Hide all scenes
-                this.scenes.forEach(scene => {
-                    scene.classList.remove('active');
-                });
-                
-                // Show current scene
-                document.getElementById(`scene${sceneNumber}`).classList.add('scene', 'active');
+                this.scenes.forEach(scene => scene.classList.remove('active'));
+                document.getElementById(`scene${sceneNumber}`).classList.add('active');
                 
                 // Show dialogue for current scene
                 this.dialogues.forEach(d => d.classList.remove('show'));
@@ -778,12 +892,41 @@
                 
                 // Special scene handlers
                 if (sceneNumber === 5) {
-                    setTimeout(() => this.showQRCode(), 3000);
+                    setTimeout(() => this.showQRCode(), 2000);
                 }
                 
-                if (sceneNumber === 6) {
+                if (sceneNumber === 7) {
+                    this.currentQuestion = 0;
+                    document.getElementById('question-text').textContent = this.questions[0];
                     this.startGlitchEffect();
                 }
+            }
+            
+            showQRCode() {
+                const qr = document.getElementById('qr-code');
+                if (qr && this.currentScene === 5) {
+                    qr.style.display = 'block';
+                }
+            }
+            
+            maskExplodeAndFinale() {
+                // Create explosion effect
+                const explosion = document.createElement('div');
+                explosion.className = 'explosion';
+                document.getElementById('movie-container').appendChild(explosion);
+                
+                // Hide mask and quiz
+                document.getElementById('hacker-mask').style.display = 'none';
+                document.getElementById('quiz-container').style.display = 'none';
+                
+                // Start petal rain
+                this.startPetalRain();
+                
+                // After explosion, show finale
+                setTimeout(() => {
+                    explosion.remove();
+                    this.showScene(8);
+                }, 1000);
             }
             
             nextScene() {
@@ -804,7 +947,6 @@
                             el.style.transform = `translate3d(${offset}px, 0, 0)`;
                         });
                         
-                        // Move character slightly
                         const movingChar = document.querySelector('.character.moving');
                         if (movingChar) {
                             const moveOffset = (offset % 60) / 60 * 25 - 12.5;
@@ -814,45 +956,24 @@
                 }, 50);
             }
             
-            showQRCode() {
-                const qr = document.getElementById('qr-code');
-                if (qr && this.currentScene === 5) {
-                    qr.style.display = 'block';
-                    setTimeout(() => {
-                        qr.style.display = 'none';
-                        // Show mask scene after QR disappears
-                        setTimeout(() => this.showScene(6), 1500);
-                    }, 6000);
-                }
-            }
-            
             setupNoButton() {
                 const noBtn = document.getElementById('no-btn');
                 if (!noBtn) return;
                 
-                noBtn.addEventListener('mouseover', (e) => {
-                    const container = document.getElementById('movie-container');
-                    const maxX = container.clientWidth - 100;
-                    const maxY = container.clientHeight - 100;
-                    const x = Math.random() * maxX;
-                    const y = Math.random() * maxY;
-                    noBtn.style.position = 'absolute';
-                    noBtn.style.left = x + 'px';
-                    noBtn.style.top = y + 'px';
-                });
-                
-                // For mobile
-                noBtn.addEventListener('touchstart', (e) => {
+                const moveButton = (e) => {
                     e.preventDefault();
                     const container = document.getElementById('movie-container');
-                    const maxX = container.clientWidth - 100;
-                    const maxY = container.clientHeight - 100;
+                    const maxX = container.clientWidth - 120;
+                    const maxY = container.clientHeight - 200;
                     const x = Math.random() * maxX;
                     const y = Math.random() * maxY;
                     noBtn.style.position = 'absolute';
                     noBtn.style.left = x + 'px';
                     noBtn.style.top = y + 'px';
-                });
+                };
+                
+                noBtn.addEventListener('mouseover', moveButton);
+                noBtn.addEventListener('touchstart', moveButton);
             }
             
             startGlitchEffect() {
@@ -860,8 +981,8 @@
                 if (!mask) return;
                 
                 setInterval(() => {
-                    mask.style.opacity = Math.random() > 0.4 ? '1' : '0.9';
-                    mask.style.transform = `translateX(-50%) scale(${1 + (Math.random() * 0.1 - 0.05)})`;
+                    mask.style.opacity = Math.random() > 0.3 ? '1' : '0.8';
+                    mask.style.transform = `translateX(-50%) scale(${1 + (Math.random() * 0.15 - 0.075)})`;
                 }, 150);
             }
             
@@ -869,24 +990,22 @@
                 const container = document.getElementById('petal-rain');
                 if (!container) return;
                 
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 80; i++) {
                     setTimeout(() => {
                         const petal = document.createElement('div');
                         petal.className = 'petal';
                         petal.style.left = Math.random() * 100 + '%';
-                        petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                        petal.style.animationDuration = (Math.random() * 5 + 4) + 's';
                         petal.style.animationDelay = '0s';
                         petal.style.transform = `rotate(${Math.random() * 360}deg)`;
                         container.appendChild(petal);
                         
-                        // Remove after animation
-                        setTimeout(() => petal.remove(), 7000);
-                    }, i * 150);
+                        setTimeout(() => petal.remove(), 9000);
+                    }, i * 100);
                 }
             }
         }
         
-        // Start the movie when page loads
         window.addEventListener('load', () => {
             const movie = new ValentineMovie();
         });
